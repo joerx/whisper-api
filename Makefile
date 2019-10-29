@@ -1,8 +1,9 @@
-DOCKER_TAG ?= $(shell git rev-parse --short HEAD)
+GIT_REF ?= $(shell git branch --show-current)
+TAG ?= $(shell basename $(GIT_REF) | sed s/^master$$/latest/)
 DOCKER_PREFIX ?= quay.io/yodo-io
-PROJECT := whisper-api
+PROJECT := whisper-backend
 
-DOCKER_IMAGE := $(DOCKER_PREFIX)/$(PROJECT):$(DOCKER_TAG)
+DOCKER_IMAGE := $(DOCKER_PREFIX)/$(PROJECT):$(TAG)
 
 default: clean docker-build
 
