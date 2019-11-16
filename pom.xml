@@ -2,15 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>io.yodo</groupId>
 	<artifactId>whisper-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<name>whisper-api</name>
 	<description>API Gateway for whisper</description>
 
@@ -31,11 +34,22 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.10</version>
+		</dependency>
+
+		<!-- Whisper commons -->
+		<dependency>
+			<groupId>io.yodo</groupId>
+			<artifactId>whisper-commons</artifactId>
+			<version>0.2.0</version>
 		</dependency>
 
 		<dependency>
@@ -81,5 +95,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>nexus.yodo.io</id>
+			<url>http://localhost:8085</url>
+		</repository>
+	</repositories>
 
 </project>

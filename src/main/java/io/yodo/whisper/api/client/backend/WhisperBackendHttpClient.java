@@ -2,10 +2,14 @@ package io.yodo.whisper.api.client.backend;
 
 import io.yodo.whisper.api.client.Fetch;
 import io.yodo.whisper.api.entity.ShoutPage;
-import io.yodo.whisper.api.entity.TokenRequest;
-import io.yodo.whisper.api.entity.TokenResponse;
+import io.yodo.whisper.commons.security.jwt.JWTTokenAuthentication;
+import io.yodo.whisper.commons.security.jwt.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -18,23 +22,22 @@ public class WhisperBackendHttpClient implements WhisperBackendClient{
 
     private final Fetch fetch;
 
-    private final WhisperBackendConfig config;
-
-    public WhisperBackendHttpClient(WhisperBackendConfig config) {
-        this.log.debug("Backend url: " + config.getUrl());
-        this.fetch = new Fetch(config);
-        this.config = config;
+    public WhisperBackendHttpClient(@Value("${whisper.backend.url}") String backendUrl) {
+        this.fetch = new Fetch(backendUrl);
     }
 
     private String getToken() {
-        // TODO: buffer tokens, only request new one if existing one is not valid anymore
-        log.debug("Requesting token from backend");
-        log.debug("Using client id " + config.getClientId());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        log.debug("Found authentication " + auth);
 
-        TokenRequest req = new TokenRequest(config.getClientId(), config.getClientSecret());
-        TokenResponse tr = fetch.post("/token").body(req).getResponse(TokenResponse.class);
+        if (auth instanceof AnonymousAuthenticationToken) {
+            throw new UnauthorizedException("No valid authentication found");
+        }
+        if (!(auth instanceof JWTTokenAuthentication)) {
+            throw new IllegalStateException("Invalid authentication found, expected " + JWTTokenAuthentication.class + " but got " + auth.getClass());
+        }
 
-        return tr.getToken();
+        return auth.getCredentials().toString();
     }
 
     @Override
