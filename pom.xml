@@ -98,8 +98,8 @@
 
 	<repositories>
 		<repository>
-			<id>nexus.yodo.io</id>
-			<url>http://localhost:8085</url>
+			<id>bintray-joerx-whisper</id>
+			<url>https://dl.bintray.com/joerx/whisper</url>
 		</repository>
 	</repositories>
 
