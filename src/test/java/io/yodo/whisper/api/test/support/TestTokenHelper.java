@@ -28,7 +28,7 @@ public class TestTokenHelper {
     @Value("${test.auth.client-id}")
     private String clientId;
 
-    public String requestToken() throws Exception {
+    public String getToken() throws Exception {
         log.debug("Requesting token for client with id " + clientId);
 
         ObjectMapper om = new ObjectMapper();

@@ -1,6 +1,7 @@
 package io.yodo.whisper.api.client.backend;
 
 import io.yodo.whisper.api.client.Fetch;
+import io.yodo.whisper.api.entity.Shout;
 import io.yodo.whisper.api.entity.ShoutPage;
 import io.yodo.whisper.commons.security.jwt.JWTTokenAuthentication;
 import io.yodo.whisper.commons.security.jwt.UnauthorizedException;
@@ -26,6 +27,12 @@ public class WhisperBackendHttpClient implements WhisperBackendClient{
         this.fetch = new Fetch(backendUrl);
     }
 
+    /**
+     * Get token from current authentication context
+     * @return current authentication token
+     * @throws UnauthorizedException if no valid authentication is found
+     * @throws IllegalStateException if current authentication is not of type {@link JWTTokenAuthentication}
+     */
     private String getToken() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         log.debug("Found authentication " + auth);
@@ -45,6 +52,13 @@ public class WhisperBackendHttpClient implements WhisperBackendClient{
         log.debug("Requesting shouts from backend");
         String token = getToken();
         return fetch.get("/shouts").auth(token).getResponse(ShoutPage.class);
+    }
+
+    @Override
+    public Shout postShout(Shout shout) {
+        log.debug("Posting shout in backend");
+        String token = getToken();
+        return fetch.post("/shouts").auth(token).body(shout).getResponse(Shout.class);
     }
 
     @PreDestroy
