@@ -2,7 +2,8 @@ package io.yodo.whisper.api.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.yodo.whisper.api.entity.ErrorResponse;
-import io.yodo.whisper.api.error.ApiResponseError;
+import io.yodo.whisper.api.error.ApiClientError;
+import io.yodo.whisper.api.error.ApiGatewayError;
 import io.yodo.whisper.api.error.ApiTransportError;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.*;
@@ -42,6 +43,10 @@ public class Fetch implements Closeable {
 
     public RequestBuilder put(String path) {
         return this.new RequestBuilder(new HttpPut(uri(path)));
+    }
+
+    public RequestBuilder delete(String path) {
+        return this.new RequestBuilder(new HttpDelete(uri(path)));
     }
 
     private URI uri(String path) {
@@ -105,7 +110,12 @@ public class Fetch implements Closeable {
                 if (statusCode >= 400) {
                     BufferedHttpEntity buf = new BufferedHttpEntity(res.getEntity());
                     ErrorResponse er = mapper.readValue(buf.getContent(), ErrorResponse.class);
-                    throw new ApiResponseError(statusCode, er.getMessage());
+
+                    if (statusCode >= 500) {
+                        throw new ApiGatewayError(statusCode, er.getMessage());
+                    } else {
+                        throw new ApiClientError(statusCode, er.getMessage());
+                    }
                 }
 
                 return mapper.readValue(res.getEntity().getContent(), responseType);

@@ -22,3 +22,9 @@ Then run Maven with the `integration-tests` profile:
 ```sh
 ./mvnw test -Dintegration-tests
 ```
+
+Or simply:
+
+```sh
+make integration-test
+```

@@ -16,5 +16,8 @@ docker-build: target/dependency
 docker-push: docker-build
 	docker push $(DOCKER_IMAGE)
 
+integration-test:
+	./mvnw test -Dintegration-tests
+
 clean:
 	./mvnw clean

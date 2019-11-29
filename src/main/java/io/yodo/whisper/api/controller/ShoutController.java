@@ -23,6 +23,11 @@ public class ShoutController {
         return backend.getShouts();
     }
 
+    @GetMapping("/shouts/{id}")
+    public Shout getShout(@PathVariable int id) {
+        return backend.getShout(id);
+    }
+
     @PostMapping("/shouts")
     public Shout createShout(@RequestBody Shout shout) {
         log.debug("Posting shout " + shout);
@@ -33,5 +38,10 @@ public class ShoutController {
     public Shout updateShout(@PathVariable int id, @RequestBody Shout shout) {
         log.debug("Updating shout " + shout);
         return backend.putShout(id, shout);
+    }
+
+    @DeleteMapping("/shouts/{id}")
+    public Shout deleteShout(@PathVariable int id) {
+        return backend.deleteShout(id);
     }
 }

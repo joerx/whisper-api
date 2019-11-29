@@ -66,4 +66,16 @@ public class WhisperBackendHttpClient implements WhisperBackendClient{
         String token = getToken();
         return fetch.put("/shouts/" + id).auth(token).body(shout).getResponse(Shout.class);
     }
+
+    @Override
+    public Shout getShout(int id) {
+        String token = getToken();
+        return fetch.get("/shouts/" + id).auth(token).getResponse(Shout.class);
+    }
+
+    @Override
+    public Shout deleteShout(int id) {
+        String token = getToken();
+        return fetch.delete("/shouts/" + id).auth(token).getResponse(Shout.class);
+    }
 }

@@ -10,4 +10,8 @@ public interface WhisperBackendClient {
     Shout postShout(Shout shout);
 
     Shout putShout(int id, Shout shout);
+
+    Shout getShout(int id);
+
+    Shout deleteShout(int id);
 }
