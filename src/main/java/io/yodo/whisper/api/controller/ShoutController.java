@@ -5,10 +5,7 @@ import io.yodo.whisper.api.entity.Shout;
 import io.yodo.whisper.api.entity.ShoutPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ShoutController {
@@ -30,5 +27,11 @@ public class ShoutController {
     public Shout createShout(@RequestBody Shout shout) {
         log.debug("Posting shout " + shout);
         return backend.postShout(shout);
+    }
+
+    @PutMapping("/shouts/{id}")
+    public Shout updateShout(@PathVariable int id, @RequestBody Shout shout) {
+        log.debug("Updating shout " + shout);
+        return backend.putShout(id, shout);
     }
 }

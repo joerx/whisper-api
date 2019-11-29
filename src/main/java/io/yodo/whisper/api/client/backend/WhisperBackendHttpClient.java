@@ -7,14 +7,13 @@ import io.yodo.whisper.commons.security.jwt.JWTTokenAuthentication;
 import io.yodo.whisper.commons.security.jwt.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PreDestroy;
-import java.io.IOException;
 
 @Component
 public class WhisperBackendHttpClient implements WhisperBackendClient{
@@ -23,8 +22,8 @@ public class WhisperBackendHttpClient implements WhisperBackendClient{
 
     private final Fetch fetch;
 
-    public WhisperBackendHttpClient(@Value("${whisper.backend.url}") String backendUrl) {
-        this.fetch = new Fetch(backendUrl);
+    public WhisperBackendHttpClient(@Qualifier("backendClient") Fetch fetch) {
+        this.fetch = fetch;
     }
 
     /**
@@ -61,8 +60,10 @@ public class WhisperBackendHttpClient implements WhisperBackendClient{
         return fetch.post("/shouts").auth(token).body(shout).getResponse(Shout.class);
     }
 
-    @PreDestroy
-    public void close() throws IOException {
-        fetch.close();
+    @Override
+    public Shout putShout(int id, Shout shout) {
+        log.debug("Updating shout " + shout.getId() + " in backend");
+        String token = getToken();
+        return fetch.put("/shouts/" + id).auth(token).body(shout).getResponse(Shout.class);
     }
 }

@@ -8,4 +8,6 @@ public interface WhisperBackendClient {
     ShoutPage getShouts();
 
     Shout postShout(Shout shout);
+
+    Shout putShout(int id, Shout shout);
 }

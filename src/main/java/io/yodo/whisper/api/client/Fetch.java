@@ -5,10 +5,7 @@ import io.yodo.whisper.api.entity.ErrorResponse;
 import io.yodo.whisper.api.error.ApiResponseError;
 import io.yodo.whisper.api.error.ApiTransportError;
 import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.StringEntity;
@@ -35,16 +32,16 @@ public class Fetch implements Closeable {
         httpClient = HttpClients.createDefault();
     }
 
-    public Fetch(FetchConfig configProvider) {
-        this(configProvider.getUrl());
-    }
-
     public RequestBuilder get(String path) {
         return this.new RequestBuilder(new HttpGet(uri(path)));
     }
 
     public RequestBuilder post(String path) {
         return this.new RequestBuilder(new HttpPost(uri(path)));
+    }
+
+    public RequestBuilder put(String path) {
+        return this.new RequestBuilder(new HttpPut(uri(path)));
     }
 
     private URI uri(String path) {
