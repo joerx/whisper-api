@@ -19,5 +19,8 @@ docker-push: docker-build
 integration-test:
 	./mvnw test -Dintegration-tests
 
+run:
+	./mvnw spring-boot:run
+
 clean:
 	./mvnw clean
