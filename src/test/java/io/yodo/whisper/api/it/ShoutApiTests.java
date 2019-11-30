@@ -50,6 +50,7 @@ class ShoutApiTests {
                 .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
+
     @Test
     void testGetNonExistingShoutsWillRespondNotFound() throws Exception{
         String token = tokenHelper.getToken();

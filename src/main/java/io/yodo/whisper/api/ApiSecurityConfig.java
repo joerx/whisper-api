@@ -1,12 +1,12 @@
 package io.yodo.whisper.api;
 
-import io.yodo.whisper.commons.security.jwt.JWTAuthenticationFilter;
-import io.yodo.whisper.commons.security.jwt.JWTAuthenticationManager;
-import io.yodo.whisper.commons.security.jwt.JWTTokenHelper;
+import io.yodo.whisper.commons.security.jwt.AuthenticationFilter;
+import io.yodo.whisper.commons.security.jwt.AuthenticationManager;
+import io.yodo.whisper.commons.security.jwt.TokenDecoder;
+import io.yodo.whisper.commons.security.jwt.TokenHelper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,7 +16,6 @@ import org.springframework.security.web.util.matcher.*;
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(JWTTokenHelper.class)
 public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final RequestMatcher secureURLs = new AndRequestMatcher(
@@ -47,19 +46,14 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JWTAuthenticationFilter authenticationFilter() throws Exception {
-        JWTAuthenticationFilter filter = new JWTAuthenticationFilter(secureURLs);
+    public AuthenticationFilter authenticationFilter() throws Exception {
+        AuthenticationFilter filter = new AuthenticationFilter(secureURLs);
         filter.setAuthenticationManager(authenticationManager());
         return filter;
     }
 
     @Bean
-    public JWTTokenHelper tokenHelper() {
-        return new JWTTokenHelper();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(JWTTokenHelper tokenHelper) {
-        return new JWTAuthenticationManager(tokenHelper);
+    public AuthenticationManager authenticationManager(TokenDecoder tokenDecoder) {
+        return new AuthenticationManager(tokenDecoder);
     }
 }
