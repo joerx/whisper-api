@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>io.yodo</groupId>
 			<artifactId>whisper-commons</artifactId>
-			<version>0.4.1</version>
+			<version>0.6.1</version>
 		</dependency>
 
 		<dependency>
@@ -98,7 +98,7 @@
 
 	<profiles>
 		<profile>
-			<id>no-tests</id>
+			<id>skip-tests</id>
 			<properties>
 				<maven.test.skip>true</maven.test.skip>
 			</properties>
@@ -106,7 +106,7 @@
 		<!-- Don't run integration tests by default since they require the entire stack to be up -->
 		<!-- So far we can only do this locally via https://github.com/joerx/whisper-compose/ -->
 		<profile>
-			<id>skip-integration-tests</id>
+			<id>skip-it</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -117,7 +117,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<excludes>
-								<exclude>io.yodo.whisper.api.it.*</exclude>
+								<exclude>**/it/*.java</exclude>
 							</excludes>
 						</configuration>
 					</plugin>
@@ -126,9 +126,9 @@
 		</profile>
 		<!-- Special profile to run integration tests. Requires https://github.com/joerx/whisper-compose/ -->
 		<profile>
-			<id>integration-tests</id>
+			<id>it</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<build>
 				<plugins>
@@ -137,7 +137,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<excludes>
-								<include>io.yodo.whisper.api.it.*</include>
+								<include>**/it/*Test.java</include>
 							</excludes>
 						</configuration>
 					</plugin>
@@ -148,8 +148,8 @@
 
 	<repositories>
 		<repository>
-			<id>bintray-joerx-whisper</id>
-			<url>https://dl.bintray.com/joerx/whisper</url>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/joerx/whisper-commons</url>
 		</repository>
 	</repositories>
 

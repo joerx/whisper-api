@@ -36,6 +36,7 @@ class ShoutApiTests {
         MvcResult res  = mvc.perform(get("/shouts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
                 .andReturn();
 
         return om.readValue(res.getResponse().getContentAsString(), ShoutPage.class);
