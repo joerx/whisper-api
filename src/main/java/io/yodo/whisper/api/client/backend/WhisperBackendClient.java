@@ -1,17 +1,17 @@
 package io.yodo.whisper.api.client.backend;
 
-import io.yodo.whisper.api.entity.Shout;
-import io.yodo.whisper.api.entity.ShoutPage;
+import io.yodo.whisper.commons.entity.ShoutDTO;
+import io.yodo.whisper.commons.entity.ShoutPageDTO;
 
 public interface WhisperBackendClient {
 
-    ShoutPage getShouts();
+    ShoutPageDTO getShouts();
 
-    Shout postShout(Shout shout);
+    ShoutDTO postShout(ShoutDTO shout);
 
-    Shout putShout(int id, Shout shout);
+    ShoutDTO putShout(int id, ShoutDTO shout);
 
-    Shout getShout(int id);
+    ShoutDTO getShout(int id);
 
-    Shout deleteShout(int id);
+    ShoutDTO deleteShout(int id);
 }

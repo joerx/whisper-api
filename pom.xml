@@ -49,9 +49,10 @@
 		<dependency>
 			<groupId>io.yodo</groupId>
 			<artifactId>whisper-commons</artifactId>
-			<version>0.6.1</version>
+			<version>0.7.0</version>
 		</dependency>
 
+		<!-- Test dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -62,6 +63,16 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

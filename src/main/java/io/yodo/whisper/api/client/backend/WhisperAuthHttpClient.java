@@ -1,6 +1,6 @@
 package io.yodo.whisper.api.client.backend;
 
-import io.yodo.whisper.api.client.Fetch;
+import io.yodo.whisper.api.http.Fetch;
 import io.yodo.whisper.api.entity.TokenRequest;
 import io.yodo.whisper.api.entity.TokenResponse;
 import org.springframework.beans.factory.annotation.Qualifier;

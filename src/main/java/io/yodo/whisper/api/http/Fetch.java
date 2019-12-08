@@ -1,10 +1,10 @@
-package io.yodo.whisper.api.client;
+package io.yodo.whisper.api.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.yodo.whisper.api.entity.ErrorResponse;
 import io.yodo.whisper.api.error.ApiClientError;
 import io.yodo.whisper.api.error.ApiGatewayError;
 import io.yodo.whisper.api.error.ApiTransportError;
+import io.yodo.whisper.commons.web.error.ErrorResponse;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -84,44 +85,79 @@ public class Fetch implements Closeable {
                 throw new UnsupportedOperationException("Can only set body on " + HttpEntityEnclosingRequest.class);
             }
 
+            String payload = encodeEntity(entity);
+            log.debug("Sending data " + payload);
+
             HttpEntityEnclosingRequest er = (HttpEntityEnclosingRequest) req;
-            er.setEntity(mapEntity(entity));
+            er.setEntity(wrapEntity(payload));
             er.setHeader("Content-type", "application/json");
 
             return this;
         }
 
-        private StringEntity mapEntity(Object entity) {
+        private String encodeEntity(Object payload) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                return new StringEntity(mapper.writeValueAsString(entity));
+                return mapper.writeValueAsString(payload);
             } catch(Exception e) {
                 throw new ApiTransportError(e);
             }
         }
 
-        public <T> T getResponse(Class<T> responseType) {
+        private StringEntity wrapEntity(String payload) {
+            try {
+                return new StringEntity(payload);
+            } catch(Exception e) {
+                throw new ApiTransportError(e);
+            }
+        }
+
+        private void handleErrorResponse(int statusCode, InputStream content) {
+            ErrorResponse er;
+
+            try {
+                er = mapper.readValue(content, ErrorResponse.class);
+            } catch (IOException io) {
+                throw new ApiTransportError(io);
+            }
+
+            if (statusCode >= 500) {
+                throw new ApiGatewayError(statusCode, er.getMessage());
+            } else if (statusCode >= 400) {
+                throw new ApiClientError(statusCode, er.getMessage());
+            }
+        }
+
+        private HttpResponseEntity doHttp() {
             log.debug(req.getMethod() + " " + req.getURI().toString());
+
+            int statusCode;
+            InputStream content;
 
             try (CloseableHttpResponse res = httpClient.execute(req)) {
                 log.debug(res.getStatusLine() + " " + res.getStatusLine().getReasonPhrase());
-
-                int statusCode = res.getStatusLine().getStatusCode();
-                if (statusCode >= 400) {
-                    BufferedHttpEntity buf = new BufferedHttpEntity(res.getEntity());
-                    ErrorResponse er = mapper.readValue(buf.getContent(), ErrorResponse.class);
-
-                    if (statusCode >= 500) {
-                        throw new ApiGatewayError(statusCode, er.getMessage());
-                    } else {
-                        throw new ApiClientError(statusCode, er.getMessage());
-                    }
-                }
-
-                return mapper.readValue(res.getEntity().getContent(), responseType);
-            } catch (Exception e) {
+                statusCode = res.getStatusLine().getStatusCode();
+                content = new BufferedHttpEntity(res.getEntity()).getContent();
+            } catch (IOException e) {
                 throw new ApiTransportError(e);
             }
+
+            if (statusCode >= 400) {
+                handleErrorResponse(statusCode, content);
+            }
+            return new HttpResponseEntity(statusCode, content);
+        }
+
+        public <T> T getResponse(Class<T> responseType) {
+            try {
+                return mapper.readValue(doHttp().getContent(), responseType);
+            } catch (IOException e) {
+                throw new ApiTransportError(e);
+            }
+        }
+
+        public HttpResponseEntity execute() {
+            return doHttp();
         }
     }
 }

@@ -1,6 +1,6 @@
 package io.yodo.whisper.api.config;
 
-import io.yodo.whisper.api.client.Fetch;
+import io.yodo.whisper.api.http.Fetch;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

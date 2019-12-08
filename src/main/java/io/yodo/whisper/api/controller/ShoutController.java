@@ -1,8 +1,8 @@
 package io.yodo.whisper.api.controller;
 
 import io.yodo.whisper.api.client.backend.WhisperBackendClient;
-import io.yodo.whisper.api.entity.Shout;
-import io.yodo.whisper.api.entity.ShoutPage;
+import io.yodo.whisper.commons.entity.ShoutDTO;
+import io.yodo.whisper.commons.entity.ShoutPageDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -19,29 +19,29 @@ public class ShoutController {
     }
 
     @GetMapping("/shouts")
-    public ShoutPage listShouts() {
+    public ShoutPageDTO listShouts() {
         return backend.getShouts();
     }
 
     @GetMapping("/shouts/{id}")
-    public Shout getShout(@PathVariable int id) {
+    public ShoutDTO getShout(@PathVariable int id) {
         return backend.getShout(id);
     }
 
     @PostMapping("/shouts")
-    public Shout createShout(@RequestBody Shout shout) {
+    public ShoutDTO createShout(@RequestBody ShoutDTO shout) {
         log.debug("Posting shout " + shout);
         return backend.postShout(shout);
     }
 
     @PutMapping("/shouts/{id}")
-    public Shout updateShout(@PathVariable int id, @RequestBody Shout shout) {
+    public ShoutDTO updateShout(@PathVariable int id, @RequestBody ShoutDTO shout) {
         log.debug("Updating shout " + shout);
         return backend.putShout(id, shout);
     }
 
     @DeleteMapping("/shouts/{id}")
-    public Shout deleteShout(@PathVariable int id) {
+    public ShoutDTO deleteShout(@PathVariable int id) {
         return backend.deleteShout(id);
     }
 }
